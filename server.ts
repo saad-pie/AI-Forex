@@ -7,8 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from root directory
-app.use(express.static(path.join(__dirname, '../')));
+// Determine correct static files path for Vercel vs Local
+const publicPath = path.join(__dirname, '../');
+app.use(express.static(publicPath));
+app.use(express.static(path.join(__dirname, './')));
 
 // AI prediction endpoint for Vercel Serverless
 app.get('/api/predict', (req: Request, res: Response) => {
@@ -35,9 +37,16 @@ app.get('/api/predict', (req: Request, res: Response) => {
     }
 });
 
-// Fallback route to serve index.html for any other route
+// Fallback route to serve index.html safely
 app.get('*', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../index.html'));
+    const indexPath = path.resolve(__dirname, '../index.html');
+    res.sendFile(indexPath, (err) => {
+        if (err) {
+            res.sendFile(path.resolve(__dirname, './index.html'), (err2) => {
+                if (err2) res.status(404).send("Index.html not found in server bundle.");
+            });
+        }
+    });
 });
 
 // Local testing fallback
