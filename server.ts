@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files (like index.html) from the root directory
+// Serve static files from root directory
 app.use(express.static(path.join(__dirname, '../')));
 
 // AI prediction endpoint for Vercel Serverless
@@ -35,7 +35,7 @@ app.get('/api/predict', (req: Request, res: Response) => {
     }
 });
 
-// Fallback route to serve index.html for any other requests
+// Fallback route to serve index.html for any other route
 app.get('*', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../index.html'));
 });
@@ -43,10 +43,6 @@ app.get('*', (req: Request, res: Response) => {
 // Local testing fallback
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`Local server running on port ${PORT}`));
-}
-
-export default app;
     app.listen(PORT, () => console.log(`Local server running on port ${PORT}`));
 }
 
