@@ -185,7 +185,7 @@
                 logToConsole("[Smart-Shield] Connected! Guardrails activated.", "success");
                 connectShieldStream(wsUrl);
 
-                // Start polling the TypeScript backend model for decisions
+                // Start polling the serverless TypeScript backend endpoint for decisions
                 aiPollInterval = setInterval(fetchTSModelPrediction, 3000);
 
             } catch (ex) {
@@ -197,7 +197,8 @@
         async function fetchTSModelPrediction() {
             if (!isAutonomousActive) return;
             try {
-                const response = await fetch('http://localhost:3000/api/predict');
+                // Updated to use relative path for Vercel Serverless deployment
+                const response = await fetch('/api/predict');
                 if (!response.ok) return;
                 const aiPayload = await response.json();
 
@@ -321,5 +322,4 @@
         }
     </script>
 </body>
-  </html>
-  
+</html>
